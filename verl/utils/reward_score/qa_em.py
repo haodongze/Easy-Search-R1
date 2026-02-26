@@ -70,15 +70,12 @@ def extract_solution(solution_str):
     #     return None
     # solution_str = solution_str.split('\n')[-1]
 
-    answer_pattern = r'<answer>(.*?)</answer>'
-    match = re.finditer(answer_pattern, solution_str, re.DOTALL)
-    matches = list(match)
-    
-    # If there are 0 or exactly 1 matches, return None
-    if len(matches) <= 1:
+    answer_pattern = r"<answer>\s*(.*?)\s*</answer>"
+    matches = list(re.finditer(answer_pattern, solution_str, re.DOTALL))
+
+    if not matches:
         return None
-    
-    # If there are 2 or more matches, return the last one
+
     return matches[-1].group(1).strip()
 
 

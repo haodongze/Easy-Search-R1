@@ -59,6 +59,7 @@ PYTHONUNBUFFERED=1 python3 -m verl.trainer.main_ppo \
     algorithm.no_think_rl=false \
     actor_rollout_ref.rollout.n_agent=5 \
     actor_rollout_ref.rollout.temperature=1 \
+    actor_rollout_ref.actor.state_masking=true \
     trainer.logger=['wandb'] \
     +trainer.val_only=false \
     +trainer.val_before_train=true \
