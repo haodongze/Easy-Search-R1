@@ -582,8 +582,8 @@ class RayPPOTrainer(object):
                 test_batch = DataProto.from_single_dict(test_data)
 
                 # repeat test batch
-                test_batch = test_batch.repeat(repeat_times=self.config.actor_rollout_ref.rollout.val_kwargs.n,
-                                            interleave=True)
+                # test_batch = test_batch.repeat(repeat_times=self.config.actor_rollout_ref.rollout.val_kwargs.n,
+                #                             interleave=True)
 
                 # we only do validation on rule-based rm
                 if self.config.reward_model.enable and test_batch[0].non_tensor_batch['reward_model']['style'] == 'model':
@@ -901,6 +901,7 @@ class RayPPOTrainer(object):
                 timing_raw = {}
 
                 batch: DataProto = DataProto.from_single_dict(batch_dict)
+                batch = batch.repeat(repeat_times=self.config.actor_rollout_ref.rollout.n_agent, interleave=True)
 
                 # pop those keys for generation
                 if 'multi_modal_inputs' in batch.non_tensor_batch.keys():
@@ -1057,6 +1058,8 @@ class RayPPOTrainer(object):
                     if self.config.trainer.critic_warmup <= self.global_steps:
                         # update actor
                         with _timer('update_actor', timing_raw):
+                            if self.config.do_search and self.config.actor_rollout_ref.actor.state_masking:
+                                batch, metrics = self._create_loss_mask(batch, metrics)
                             actor_output = self.actor_rollout_wg.update_actor(batch)
                         actor_output_metrics = reduce_metrics(actor_output.meta_info['metrics'])
                         metrics.update(actor_output_metrics)
@@ -1092,3 +1095,18 @@ class RayPPOTrainer(object):
 
                 progress_bar.update(1)
                 self.global_steps += 1
+
+    def _create_loss_mask(self, batch, metrics):
+        """Create loss mask for state tokens."""
+        response_length = batch.batch['responses'].shape[-1]
+        response_mask = batch.batch['attention_mask'][:, -response_length:]
+        
+        loss_mask = batch.batch['info_mask'][:, -response_length:]
+        batch.batch['loss_mask'] = loss_mask
+
+        metrics.update({
+            'state_tokens/total': loss_mask.sum().item(),
+            'state_tokens/coverage': (loss_mask.sum() / response_mask.sum()).item(),
+        })
+        
+        return batch, metrics

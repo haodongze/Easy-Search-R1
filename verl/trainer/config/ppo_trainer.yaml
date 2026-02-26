@@ -2,6 +2,8 @@ data:
   tokenizer: null
   train_files: ~/data/rlhf/gsm8k/train.parquet
   val_files: ~/data/rlhf/gsm8k/test.parquet
+  train_data_num: null
+  val_data_num: null
   prompt_key: prompt
   max_prompt_length: 512
   max_response_length: 512
@@ -97,6 +99,7 @@ actor_rollout_ref:
     do_sample: True
     # number of responses (i.e. num sample times)
     n: 1 # > 1 for grpo
+    n_agent: 1 # different here used for agent tasks only
     val_kwargs:
       # sampling parameters for validation
       top_k: -1 # 0 for hf rollout, -1 for vllm rollout
@@ -172,6 +175,7 @@ algorithm:
   gamma: 1.0
   lam: 1.0
   adv_estimator: gae
+  no_think_rl: False
   kl_penalty: kl  # how to estimate kl divergence
   kl_ctrl:
     type: fixed
