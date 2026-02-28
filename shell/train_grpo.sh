@@ -1,5 +1,5 @@
 export CUDA_VISIBLE_DEVICES=0,1,2,3
-export DATA_DIR='data/nq_search'
+export DATA_DIR='data/nq_hotpotqa_train'
 
 WAND_PROJECT='Search-R1'
 
@@ -14,12 +14,12 @@ WAND_PROJECT='Search-R1'
 
 # export BASE_MODEL='Qwen/Qwen2.5-3B'
 # export EXPERIMENT_NAME=nq-search-r1-grpo-qwen2.5-3b-em
-# export BASE_MODEL='Qwen/Qwen2.5-3B-Instruct'
-# export EXPERIMENT_NAME=nq-search-r1-grpo-qwen2.5-3b-it-em
+export BASE_MODEL='/mnt/data/group/models/Qwen2.5-3B-Instruct'
+export EXPERIMENT_NAME=nq-search-r1-grpo-qwen2.5-3b-it-em
 # export BASE_MODEL='Qwen/Qwen2.5-7B'
 # export EXPERIMENT_NAME=nq-search-r1-grpo-qwen2.5-7b-em
-export BASE_MODEL='/mnt/data/group/models/Qwen2.5-7B-Instruct'
-export EXPERIMENT_NAME=nq-search-r1-grpo-qwen2.5-7b-it-em
+# export BASE_MODEL='/mnt/data/group/models/Qwen2.5-7B-Instruct'
+# export EXPERIMENT_NAME=nq-search-r1-grpo-qwen2.5-7b-it-em
 
 # set -x
 # export VLLM_ATTENTION_BACKEND=XFORMERS # vllm + qwen2-7b with flash_attn has some issues
